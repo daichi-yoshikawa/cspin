@@ -5,7 +5,13 @@
 
 namespace cspin
 {
-  using NamedMutex = boost::interprocess::named_mutex;
+
+using namespace boost::interprocess;
+using NamedMutex = named_mutex;
+using NamedMutexPtr = std::shared_ptr<named_mutex>;
+using NamedMutexUPtr = std::unique_ptr<named_mutex>;
+using NamedMutexSPtr = std::shared_ptr<named_mutex>;
+
 }
 
 #endif // CSPIN_INCLUDE_CSPIN_NAMED_MUTEX_HPP_

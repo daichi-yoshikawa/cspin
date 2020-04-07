@@ -122,6 +122,8 @@ public:
   }
 
 private:
+  SharedMemory& operator=(const SharedMemory&);
+
   std::string global_name_;
   std::size_t size_;
 
@@ -133,7 +135,14 @@ private:
   void (*write_)(T*, const T&, std::shared_ptr<NamedMutex>&);
   void (*read_)(T*, T&, std::shared_ptr<NamedMutex>&);
 };
-  
+
+template<typename T>
+using SharedMemoryPtr = std::shared_ptr< SharedMemory<T> >;
+template<typename T>
+using SharedMemoryUPtr = std::unique_ptr< SharedMemory<T> >;
+template<typename T>
+using SharedMemorySPtr = std::shared_ptr< SharedMemory<T> >;
+
 }
 
 #endif // CSPIN_INCLUDE_CSPIN_SHARED_MEMORY_HPP_
