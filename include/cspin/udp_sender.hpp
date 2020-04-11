@@ -1,7 +1,7 @@
 #ifndef CSPIN_INCLUDE_CSPIN_UDP_SENDER_HPP_
 #define CSPIN_INCLUDE_CSPIN_UDP_SENDER_HPP_
 
-#include <iostream>
+#include <tuple>
 #include <memory>
 #include <string>
 
@@ -11,39 +11,35 @@ namespace cspin
 {
 
 using boost::asio::ip::udp;
-using boost::asio::ip::address;
 
 class UDPSender
 {
 public:
-  UDPSender(const std::string& ip_address, uint32_t port)
-    : endpoint_(address::from_string(ip_address), port)
-  {
-    socket_ = std::make_shared<udp::socket>(io_service_);
-    socket_->open(udp::v4());
-  }
+  explicit UDPSender(const std::string& ip_address, uint32_t port);
+  ~UDPSender() { this->close(); }
 
-  ~UDPSender()
+  struct Result
   {
-    if(socket_ != nullptr) socket_->close();
-  }
-
-  void send(const std::string& data)
-  {
+    std::size_t sent_bytes;
     boost::system::error_code err;
-    auto sent = socket_->send_to(boost::asio::buffer(data), endpoint_, 0, err);
-  }
+  };
 
-  void close()
-  {
-    socket_->close();
-  }
+  Result send(const std::string& data) const;
+  void reopen() { socket_->open(udp::v4()); }
+  void close() { if(socket_ != nullptr) socket_->close(); }
 
 private:
+  UDPSender(const UDPSender&);
+  UDPSender& operator=(UDPSender&);
+
   boost::asio::io_service io_service_;
-  std::shared_ptr<udp::socket> socket_;
-  udp::endpoint endpoint_;
+  std::unique_ptr<udp::socket> socket_;
+  udp::endpoint destination_point_;
 };
+
+using UDPSenderPtr = std::shared_ptr<UDPSender>;
+using UDPSenderUPtr = std::unique_ptr<UDPSender>;
+using UDPSenderSPtr = std::shared_ptr<UDPSender>;
 
 }
 
