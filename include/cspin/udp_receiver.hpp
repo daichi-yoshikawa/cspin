@@ -99,6 +99,10 @@ private:
   std::function<void(const std::string&)> error_callback_;
 };
 
+using UDPReceiverPtr = std::shared_ptr<UDPReceiver>;
+using UDPReceiverUPtr = std::unique_ptr<UDPReceiver>;
+using UDPReceiverSPtr = std::shared_ptr<UDPReceiver>;
+
 }
 
 #endif // CSPIN_INCLUDE_CSPIN_UDP_RECEIVER_HPP_
