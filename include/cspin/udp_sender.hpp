@@ -7,15 +7,21 @@
 
 #include "boost/asio.hpp"
 
+using boost::asio::ip::udp;
+
 namespace cspin
 {
-
-using boost::asio::ip::udp;
 
 class UDPSender
 {
 public:
-  explicit UDPSender(const std::string& ip_address, uint32_t port);
+  explicit UDPSender(const std::string& ip_address, uint32_t port)
+    : receiver_point_(boost::asio::ip::address::from_string(ip_address), port)
+  {
+    socket_ = std::make_unique<udp::socket>(io_service_);
+    socket_->open(udp::v4());
+  }
+  
   ~UDPSender() { this->close(); }
 
   struct Result
@@ -24,8 +30,18 @@ public:
     boost::system::error_code err;
   };
 
-  Result send(const std::string& data) const;
-  void reopen() { socket_->open(udp::v4()); }
+  Result send(const std::string& data) const
+  {
+    Result result;
+    result.sent_bytes = socket_->send_to(boost::asio::buffer(data), receiver_point_, 0, result.err);
+    return result;
+  }
+
+  void reopen() {
+    if(socket_ == nullptr) std::make_unique<udp::socket>(io_service_);
+    socket_->open(udp::v4());
+  }
+
   void close() { if(socket_ != nullptr) socket_->close(); }
 
 private:
@@ -34,7 +50,7 @@ private:
 
   boost::asio::io_service io_service_;
   std::unique_ptr<udp::socket> socket_;
-  udp::endpoint destination_point_;
+  udp::endpoint receiver_point_;
 };
 
 using UDPSenderPtr = std::shared_ptr<UDPSender>;
