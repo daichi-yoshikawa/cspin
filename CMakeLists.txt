@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(THIRD_PARTY_DIR ${PROJECT_SOURCE_DIR}/3rd_party)
 set(BOOST_INCLUDE_DIR ${THIRD_PARTY_DIR}/boost-1.72.0)
 add_definitions(-DBOOST_ERROR_CODE_HEADER_ONLY)
+add_definitions(-DBOOST_SYSTEM_NO_DEPRECATED)
 
 file(GLOB_RECURSE sources "src/[a-zA-Z]*.cpp")
 file(GLOB_RECURSE test_sources "test/[a-zA-Z]*.cpp")
