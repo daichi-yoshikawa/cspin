@@ -58,6 +58,9 @@ public:
   void close() override { if(socket_ != nullptr) socket_->close(); }
 
 private:
+  TCPClient(const TCPClient&);
+  TCPClient& operator=(const TCPClient&);
+
   void wait_to_connect()
   {
     socket_->async_connect(
@@ -70,6 +73,7 @@ private:
     if(error)
     {
       this->getCallback(CallbackType::CONNECT_ERROR)(error.message());
+      wait_to_connect();
       return;
     }
     is_connected_ = true;
@@ -84,9 +88,6 @@ private:
     }
     this->getCallback(CallbackType::SEND)(send_data);
   }
-
-  TCPClient(const TCPClient&);
-  TCPClient& operator=(const TCPClient&);
 
   boost::asio::io_service io_service_;
   std::unique_ptr<tcp::socket> socket_;
