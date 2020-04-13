@@ -18,7 +18,7 @@ using boost::asio::ip::tcp;
 class TCPServer : public SocketCommunication
 {
 public:
-  explicit TCPServer(const std::string& ip_address, uint16_t port, std::size_t buffer_size=4096)
+  explicit TCPServer(const std::string& ip_address, uint16_t port, std::size_t buffer_size = 4096)
     : SocketCommunication(
         CallbackFunctionMap({
             { CallbackType::ACCEPT, defaults::callback },
