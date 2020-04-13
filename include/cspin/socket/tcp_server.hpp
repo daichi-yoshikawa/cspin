@@ -44,6 +44,9 @@ public:
   void close() override { if(socket_ != nullptr) socket_->close(); }
 
 private:
+  TCPServer(const TCPServer&);
+  TCPServer& operator=(const TCPServer&);
+
   void wait_to_accept()
   {
     acceptor_->async_accept(
@@ -76,9 +79,11 @@ private:
 
   void receive(const boost::system::error_code& error, size_t bytes_transferred)
   {
-    if(error && error != boost::asio::error::eof)
+    if(error)
     {
       this->getCallback(CallbackType::RECEIVE_ERROR)(error.message());
+      socket_->close();
+      wait_to_accept();
       return;
     }
 
@@ -86,9 +91,6 @@ private:
     buffer_.consume(buffer_.size());
     wait_to_receive();
   }
-
-  TCPServer(const TCPServer&);
-  TCPServer& operator=(const TCPServer&);
 
   boost::asio::io_service io_service_;
   std::unique_ptr<tcp::acceptor> acceptor_;
