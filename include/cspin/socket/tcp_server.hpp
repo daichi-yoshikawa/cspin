@@ -41,7 +41,7 @@ public:
     io_service_.run();
   }
 
-  void close() { if(socket_ != nullptr) socket_->close(); }
+  void close() override { if(socket_ != nullptr) socket_->close(); }
 
 private:
   void wait_to_accept()

@@ -49,7 +49,7 @@ public:
     socket_->open(udp::v4());
   }
 
-  void close() { if(socket_ != nullptr) socket_->close(); }
+  void close() override { if(socket_ != nullptr) socket_->close(); }
 
 private:
   UDPSender(const UDPSender&);

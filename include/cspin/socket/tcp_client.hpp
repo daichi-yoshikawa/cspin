@@ -55,7 +55,7 @@ public:
 
   bool is_connected() const override { return is_connected_; }
 
-  void close() { if(socket_ != nullptr) socket_->close(); }
+  void close() override { if(socket_ != nullptr) socket_->close(); }
 
 private:
   void wait_to_connect()

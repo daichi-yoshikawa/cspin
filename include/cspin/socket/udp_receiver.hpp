@@ -50,7 +50,7 @@ public:
     socket_->bind(sender_point_);
   }
 
-  void close() { if(socket_ != nullptr) socket_->close(); }
+  void close() override { if(socket_ != nullptr) socket_->close(); }
 
 private:
   UDPReceiver(const UDPReceiver&);
