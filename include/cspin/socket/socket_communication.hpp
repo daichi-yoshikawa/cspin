@@ -58,8 +58,7 @@ using CallbackFunctionMap = std::map<CallbackType, CallbackFunction>;
 class SocketCommunication
 {
 public:
-  SocketCommunication() {}
-  SocketCommunication(const CallbackFunctionMap& callbacks) : callbacks_(callbacks.begin(), callbacks.end()) {}
+  explicit SocketCommunication(const CallbackFunctionMap& callbacks) : callbacks_(callbacks.begin(), callbacks.end()) {}
   virtual ~SocketCommunication() {}
 
   virtual void run() {}
@@ -87,6 +86,9 @@ public:
   CallbackFunction& getCallback(CallbackType callback_type) { return callbacks_[callback_type]; }
 
 private:
+  SocketCommunication();
+  SocketCommunication(const SocketCommunication&);
+  SocketCommunication& operator=(const SocketCommunication&);
   CallbackFunctionMap callbacks_;
 };
 
