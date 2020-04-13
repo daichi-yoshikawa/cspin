@@ -16,14 +16,13 @@ if(VERBOSE)
 endif()
 
 add_library(cspin SHARED ${sources})
-
 target_include_directories(cspin
   PUBLIC ${PROJECT_SOURCE_DIR}/include
          ${BOOST_INCLUDE_DIR}
 )
-
 # rt is needed for shared memory.
 #target_link_libraries(cspin pthread rt boost_system)
 target_link_libraries(cspin pthread rt)
+target_compile_options(cspin PRIVATE -Wall -Werror -pedantic-errors -Wextra -Wconversion -Wsign-conversion)
 
 add_subdirectory(test)
