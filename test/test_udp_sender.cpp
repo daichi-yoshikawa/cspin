@@ -1,9 +1,9 @@
 #include <chrono>
 
 #include "cspin/timer_event.hpp"
-#include "cspin/udp_sender.hpp"
+#include "cspin/socket/udp_sender.hpp"
 
-using namespace cspin;
+using namespace cspin::socket;
 
 void func()
 {
@@ -30,6 +30,6 @@ void func()
 int main(int argc, char** argv)
 {
   std::chrono::milliseconds interval(1000);
-  TimerEventPtr te = std::make_shared<TimerEvent>(interval, func, 1);
+  cspin::TimerEventPtr te = std::make_shared<cspin::TimerEvent>(interval, func, 1);
   te->start();
 }
