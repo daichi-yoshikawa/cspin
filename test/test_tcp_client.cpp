@@ -78,7 +78,6 @@ private:
   uint32_t cnt_;
 };
 
-
 int main(int argc, char** argv)
 {
   Robot robot;

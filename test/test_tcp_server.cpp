@@ -31,10 +31,10 @@ public:
 int main(int argc, char** argv)
 {
   Robot robot;
-  std::function<void(const std::string&)> accept_callback = std::bind(&Robot::accept_callback, &robot, std::placeholders::_1);
-  std::function<void(const std::string&)> receive_callback = std::bind(&Robot::receive_callback, &robot, std::placeholders::_1);
-  std::function<void(const std::string&)> accept_error_callback = std::bind(&Robot::accept_error_callback, &robot, std::placeholders::_1);
-  std::function<void(const std::string&)> receive_error_callback = std::bind(&Robot::receive_error_callback, &robot, std::placeholders::_1);
+  CallbackFunction accept_callback = std::bind(&Robot::accept_callback, &robot, std::placeholders::_1);
+  CallbackFunction receive_callback = std::bind(&Robot::receive_callback, &robot, std::placeholders::_1);
+  CallbackFunction accept_error_callback = std::bind(&Robot::accept_error_callback, &robot, std::placeholders::_1);
+  CallbackFunction receive_error_callback = std::bind(&Robot::receive_error_callback, &robot, std::placeholders::_1);
 
   TCPServer server("127.0.0.1", 33333);
 

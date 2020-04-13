@@ -1,35 +1,63 @@
 #include <chrono>
+#include <functional>
+#include <string>
 
 #include "cspin/timer_event.hpp"
 #include "cspin/socket/udp_sender.hpp"
 
 using namespace cspin::socket;
 
-void func()
+class Robot
 {
-  static UDPSender sender("127.0.0.1", 12345);
-  static uint32_t cnt = 0;
-
-  std::string data = "test message <`1234567890-=~!@#$%^&*()_+qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM[]\{}|;':\",./<>?";
-  sender.send(data);
-
-  if(cnt > 10)
+public:
+  Robot() : sender_("127.0.0.1", 12345), cnt_(0)
   {
-    cnt = 0;
-    std::cout << "Reopen socket." << std::endl;
-    sender.reopen();
+    CallbackFunction send_callback = std::bind(&Robot::send_callback, this, std::placeholders::_1);
+    CallbackFunction send_error_callback = std::bind(&Robot::send_error_callback, this, std::placeholders::_1);
+
+    sender_.setCallback(CallbackType::SEND, send_callback);
+    sender_.setCallback(CallbackType::SEND_ERROR, send_error_callback);
   }
-  else if(cnt == 5)
+
+  void send()
   {
-    std::cout << "Close socket." << std::endl;
-    sender.close();
+    ++cnt_;
+    std::string send_data = "test message <`1234567890-=~!@#$%^&*()_+qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM[]\{}|;':\",./<>?";
+    sender_.send(send_data);
+
+    if(cnt_ > 10)
+    {
+      cnt_ = 0;
+      std::cout << "Reopen socket." << std::endl;
+      sender_.reopen();
+    }
+    else if(cnt_ == 5)
+    {
+      std::cout << "Close socket." << std::endl;
+      sender_.close();
+    }
   }
-  ++cnt;
-}
+
+  void send_callback(const std::string& send_data)
+  {
+    std::cout << "[" << cnt_ << "] MyRobot::send_callback is called: " << send_data << std::endl;
+  }
+
+  void send_error_callback(const std::string& err_msg)
+  {
+    std::cerr << "MyRobot::error_callback is called: " << err_msg << std::endl;
+  }
+
+private:
+  UDPSender sender_;
+  uint32_t cnt_;
+};
 
 int main(int argc, char** argv)
 {
+  Robot robot;
   std::chrono::milliseconds interval(1000);
+  std::function<void()> func = std::bind(&Robot::send, &robot);
   cspin::TimerEventPtr te = std::make_shared<cspin::TimerEvent>(interval, func, 1);
   te->start();
 }
