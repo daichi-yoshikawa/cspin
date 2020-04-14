@@ -7,6 +7,8 @@ using namespace cspin::socket;
 class Robot
 {
 public:
+  Robot() : cnt_(0) {}
+
   void accept_callback(const std::string&)
   {
     std::cout << "MyRobot::accept_callback is called." << std::endl;
@@ -14,7 +16,8 @@ public:
 
   void receive_callback(const std::string& recv_data)
   {
-    std::cout << "MyRobot::receive_callback is called: " << recv_data << std::endl;
+    ++cnt_;
+    std::cout << "[" << cnt_ << "] MyRobot::receive_callback is called: " << recv_data << std::endl;
   }
 
   void accept_error_callback(const std::string& err_msg)
@@ -26,6 +29,9 @@ public:
   {
     std::cerr << "MyRobot::receive_error_callback is called: " << err_msg << std::endl;
   }
+
+private:
+  uint32_t cnt_;
 };
 
 int main(int argc, char** argv)
