@@ -7,6 +7,7 @@
 
 #include <boost/interprocess/managed_shared_memory.hpp>
 
+#include "cspin/utils.hpp"
 #include "cspin/scoped_lock.hpp"
 #include "cspin/named_mutex.hpp"
 
@@ -25,6 +26,7 @@ void write_with_lock(T* shm_data, const T& data, std::shared_ptr<NamedMutex>& mu
 template<typename T>
 void write_without_lock(T* shm_data, const T& data, std::shared_ptr<NamedMutex>& mutex_)
 {
+  (void)mutex_; // To avoid error: unused parameter
   *shm_data = data;
 }
 
@@ -38,6 +40,7 @@ void read_with_lock(T* shm_data, T& data, std::shared_ptr<NamedMutex>& mutex_)
 template<typename T>
 void read_without_lock(T* shm_data, T& data, std::shared_ptr<NamedMutex>& mutex_)
 {
+  (void)mutex_; // To avoid error: unused parameter
   data = *shm_data;
 }
 
@@ -54,12 +57,12 @@ public:
       mutex_ = std::make_shared<NamedMutex>(
         ipc::open_or_create, mutex_name.c_str());
 
-      ScopedLock<NamedMutex>(*mutex_);
+      ScopedLock<NamedMutex> lock(*mutex_);
       try
       {
         shm_ = std::make_shared<ipc::shared_memory_object>(
           ipc::open_or_create, global_name_.c_str(), ipc::read_write);
-        shm_->truncate(size_);
+        shm_->truncate(utils::unsigned_to_signed<size_t, int32_t>(size_));
       }
       catch(ipc::interprocess_exception&)
       {
@@ -68,7 +71,7 @@ public:
           ipc::shared_memory_object::remove(global_name_.c_str());
           shm_ = std::make_shared<ipc::shared_memory_object>(
             ipc::open_or_create, global_name_.c_str(), ipc::read_write);
-          shm_->truncate(size_);
+          shm_->truncate(utils::unsigned_to_signed<size_t, int32_t>(size_));
         }
         catch(ipc::interprocess_exception& e)
         {
