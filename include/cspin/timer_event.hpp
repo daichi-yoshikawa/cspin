@@ -14,12 +14,9 @@ class TimerEvent
 {
 public:
   explicit TimerEvent(const std::chrono::milliseconds& interval, const std::function<void()>& callback, uint32_t priority);
-  ~TimerEvent() {
-    thread_.join();
-  }
+  ~TimerEvent() { thread_.join(); }
 
   void start();
-  void stop();
   void timer_event_callback();
 
 private:
@@ -36,6 +33,6 @@ using TimerEventPtr = std::shared_ptr<TimerEvent>;
 using TimerEventUPtr = std::unique_ptr<TimerEvent>;
 using TimerEventSPtr = std::shared_ptr<TimerEvent>;
 
-}
+} // namespace cspin
 
 #endif // CSPIN_INCLUDE_CSPIN_TIMER_EVENT_HPP_
