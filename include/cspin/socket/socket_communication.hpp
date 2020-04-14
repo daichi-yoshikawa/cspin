@@ -61,26 +61,11 @@ public:
   explicit SocketCommunication(const CallbackFunctionMap& callbacks) : callbacks_(callbacks.begin(), callbacks.end()) {}
   virtual ~SocketCommunication() {}
 
-  virtual void run() {}
-
-  virtual bool is_connected() const { return false; }
-
-  virtual void send(const std::string& send_data)
-  {
-    throw NotImplementedError("SocketCommunication::send is called.");
-  }
-
-  virtual void try_connect() {}
-
-  virtual void close() = 0;
-
   void setCallback(CallbackType callback_type, const CallbackFunction& callback)
   {
     if(callbacks_.find(callback_type) == callbacks_.end())
     {
-      std::stringstream ss;
-      ss << "Invalid CallbackType for this instance: " << static_cast<int32_t>(callback_type) << "\n";
-      throw RuntimeError(ss.str());
+      callbacks_.insert({callback_type, callback});
     }
     callbacks_[callback_type] = callback;
   }
@@ -100,4 +85,5 @@ using SocketCommunicationSPtr = std::shared_ptr<SocketCommunication>;
 
 } // namespace socket
 } // namespace cspin
+
 #endif // CSPIN_INCLUDE_CSPIN_SOCKET_SOCKET_COMMUNICATION_HPP_

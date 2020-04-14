@@ -7,6 +7,7 @@
 #include "boost/asio.hpp"
 #include "boost/bind.hpp"
 
+#include "cspin/socket/receiver.hpp"
 #include "cspin/socket/socket_communication.hpp"
 
 namespace cspin
@@ -16,11 +17,11 @@ namespace socket
 
 using boost::asio::ip::udp;
 
-class UDPReceiver : public SocketCommunication
+class UDPReceiver : public Receiver
 {
 public:
   explicit UDPReceiver(const std::string& ip_address, uint16_t port, std::size_t buffer_size = 4096)
-    : SocketCommunication(
+    : Receiver(
           CallbackFunctionMap({
               { CallbackType::RECEIVE, defaults::receive_callback },
               { CallbackType::RECEIVE_ERROR, defaults::error_callback }
@@ -37,17 +38,10 @@ public:
 
   ~UDPReceiver() { this->close(); }
 
-  void run() override
+  void start() override
   {
     wait_to_receive();
     io_service_.run();
-  }
-
-  void reopen()
-  {
-    if(socket_ == nullptr) std::make_unique<udp::socket>(io_service_);
-    socket_->open(udp::v4());
-    socket_->bind(sender_point_);
   }
 
   void close() override { if(socket_ != nullptr) socket_->close(); }

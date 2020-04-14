@@ -5,7 +5,7 @@
 #include <string>
 
 #include "boost/asio.hpp"
-
+#include "cspin/socket/sender.hpp"
 #include "cspin/socket/socket_communication.hpp"
 
 namespace cspin
@@ -15,11 +15,11 @@ namespace socket
 
 using boost::asio::ip::udp;
 
-class UDPSender : public SocketCommunication
+class UDPSender : public Sender
 {
 public:
   explicit UDPSender(const std::string& ip_address, uint16_t port)
-    : SocketCommunication(
+    : Sender(
           CallbackFunctionMap({
               { CallbackType::SEND, defaults::empty_callback },
               { CallbackType::SEND_ERROR, defaults::empty_callback }
@@ -44,9 +44,9 @@ public:
     this->getCallback(CallbackType::SEND)(send_data);
   }
 
-  void try_connect() override { socket_->open(udp::v4()); }
-
   void close() override { if(socket_ != nullptr) socket_->close(); }
+
+  void try_connect() override { socket_->open(udp::v4()); }
 
 private:
   UDPSender(const UDPSender&);

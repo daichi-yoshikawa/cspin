@@ -7,6 +7,7 @@
 #include "boost/asio.hpp"
 #include "boost/bind.hpp"
 
+#include "cspin/socket/sender.hpp"
 #include "cspin/socket/socket_communication.hpp"
 
 namespace cspin
@@ -16,11 +17,11 @@ namespace socket
 
 using boost::asio::ip::tcp;
 
-class TCPClient : public SocketCommunication
+class TCPClient : public Sender
 {
 public:
   explicit TCPClient(const std::string& ip_address, uint16_t port)
-    : SocketCommunication(
+    : Sender(
           CallbackFunctionMap({
               { CallbackType::CONNECT, defaults::callback },
               { CallbackType::SEND, defaults::send_callback },
@@ -57,9 +58,9 @@ public:
     }
   }
 
-  void try_connect() override { this->connect(); }
-
   void close() override { if(socket_ != nullptr) socket_->close(); }
+
+  void try_connect() override { this->connect(); }
 
 private:
   TCPClient(const TCPClient&);

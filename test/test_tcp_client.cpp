@@ -2,7 +2,7 @@
 #include <chrono>
 
 #include "cspin/timer_event.hpp"
-#include "cspin/socket/socket_communication.hpp"
+#include "cspin/socket/sender.hpp"
 #include "cspin/socket/tcp_client.hpp"
 
 using namespace cspin::socket;
@@ -64,7 +64,7 @@ public:
   }
 
 private:
-  SocketCommunicationPtr client_;
+  SenderPtr client_;
   uint32_t cnt_;
 };
 

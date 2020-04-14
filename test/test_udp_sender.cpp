@@ -3,7 +3,7 @@
 #include <string>
 
 #include "cspin/timer_event.hpp"
-#include "cspin/socket/socket_communication.hpp"
+#include "cspin/socket/sender.hpp"
 #include "cspin/socket/udp_sender.hpp"
 
 using namespace cspin::socket;
@@ -50,7 +50,7 @@ public:
   }
 
 private:
-  SocketCommunicationPtr sender_;
+  SenderPtr sender_;
   uint32_t cnt_;
 };
 

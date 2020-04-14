@@ -6,6 +6,7 @@
 #include "boost/asio.hpp"
 #include "boost/bind.hpp"
 
+#include "cspin/socket/receiver.hpp"
 #include "cspin/socket/socket_communication.hpp"
 
 namespace cspin
@@ -15,11 +16,11 @@ namespace socket
 
 using boost::asio::ip::tcp;
 
-class TCPServer : public SocketCommunication
+class TCPServer : public Receiver
 {
 public:
   explicit TCPServer(const std::string& ip_address, uint16_t port, std::size_t buffer_size = 4096)
-    : SocketCommunication(
+    : Receiver(
           CallbackFunctionMap({
               { CallbackType::ACCEPT, defaults::callback },
               { CallbackType::RECEIVE, defaults::receive_callback },
@@ -35,7 +36,7 @@ public:
 
   ~TCPServer() { this->close(); }
 
-  void run() override
+  void start() override
   {
     wait_to_accept();
     io_service_.run();

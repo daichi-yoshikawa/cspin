@@ -1,6 +1,6 @@
 #include <functional>
 
-#include "cspin/socket/socket_communication.hpp"
+#include "cspin/socket/receiver.hpp"
 #include "cspin/socket/tcp_server.hpp"
 
 using namespace cspin::socket;
@@ -43,13 +43,13 @@ int main(int argc, char** argv)
   CallbackFunction accept_error_callback = std::bind(&Robot::accept_error_callback, &robot, std::placeholders::_1);
   CallbackFunction receive_error_callback = std::bind(&Robot::receive_error_callback, &robot, std::placeholders::_1);
 
-  SocketCommunicationPtr server = std::make_shared<TCPServer>("127.0.0.1", 33333);
+  ReceiverPtr server = std::make_shared<TCPServer>("127.0.0.1", 33333);
 
   server->setCallback(CallbackType::ACCEPT, accept_callback);
   server->setCallback(CallbackType::RECEIVE, receive_callback);
   server->setCallback(CallbackType::ACCEPT_ERROR, accept_error_callback);
   server->setCallback(CallbackType::RECEIVE_ERROR, receive_error_callback);
-  server->run();
+  server->start();
 
   return 0;
 }
