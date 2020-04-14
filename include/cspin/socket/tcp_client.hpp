@@ -21,12 +21,12 @@ class TCPClient : public SocketCommunication
 public:
   explicit TCPClient(const std::string& ip_address, uint16_t port)
     : SocketCommunication(
-        CallbackFunctionMap({
-            { CallbackType::CONNECT, defaults::callback },
-            { CallbackType::SEND, defaults::send_callback },
-            { CallbackType::CONNECT_ERROR, defaults::error_callback },
-            { CallbackType::SEND_ERROR, defaults::error_callback },
-        })
+          CallbackFunctionMap({
+              { CallbackType::CONNECT, defaults::callback },
+              { CallbackType::SEND, defaults::send_callback },
+              { CallbackType::CONNECT_ERROR, defaults::error_callback },
+              { CallbackType::SEND_ERROR, defaults::error_callback },
+          })
       ),
       server_point_(boost::asio::ip::address::from_string(ip_address), port),
       is_connected_(false)
@@ -36,21 +36,25 @@ public:
 
   ~TCPClient() { this->close(); }
 
-  void run() override
-  {
-    wait_to_connect();
-    io_service_.run();
-  }
-
   void send(const std::string& send_data) override
   {
-    boost::asio::async_write(
-      *socket_, boost::asio::buffer(send_data),
-      boost::bind(
-        &TCPClient::sent, this, send_data,
-        boost::asio::placeholders::error,
-        boost::asio::placeholders::bytes_transferred)
-    );
+    if(!is_connected_) this->connect();
+    if(!is_connected_) return;
+
+    boost::system::error_code error;
+    boost::asio::write(
+        *socket_, boost::asio::buffer(send_data), error);
+
+    if(error)
+    {
+      is_connected_ = false;
+      this->getCallback(CallbackType::SEND_ERROR)(error.message());
+      socket_->close();
+    }
+    else
+    {
+      this->getCallback(CallbackType::SEND)(send_data);
+    }
   }
 
   bool is_connected() const override { return is_connected_; }
@@ -61,32 +65,22 @@ private:
   TCPClient(const TCPClient&);
   TCPClient& operator=(const TCPClient&);
 
-  void wait_to_connect()
+  void connect()
   {
-    socket_->async_connect(
-      server_point_, boost::bind(&TCPClient::connect, this, boost::asio::placeholders::error)
-    );
-  }
-  
-  void connect(const boost::system::error_code& error)
-  {
-    if(error)
-    {
-      this->getCallback(CallbackType::CONNECT_ERROR)(error.message());
-      wait_to_connect();
-      return;
-    }
-    is_connected_ = true;
-    this->getCallback(CallbackType::CONNECT)("");
-  }
+    boost::system::error_code error;
+    socket_->connect(server_point_, error);
 
-  void sent(const std::string& send_data, const boost::system::error_code& error, size_t bytes_transferred)
-  {
     if(error)
     {
-      this->getCallback(CallbackType::SEND_ERROR)(error.message());
+      is_connected_ = false;
+      this->getCallback(CallbackType::CONNECT_ERROR)(error.message());
+      socket_->close();
     }
-    this->getCallback(CallbackType::SEND)(send_data);
+    else
+    {
+      is_connected_ = true;
+      this->getCallback(CallbackType::CONNECT)("");
+    }
   }
 
   boost::asio::io_service io_service_;
