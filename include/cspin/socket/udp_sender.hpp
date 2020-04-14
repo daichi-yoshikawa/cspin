@@ -44,10 +44,7 @@ public:
     this->getCallback(CallbackType::SEND)(send_data);
   }
 
-  void reopen() {
-    if(socket_ == nullptr) std::make_unique<udp::socket>(io_service_);
-    socket_->open(udp::v4());
-  }
+  void try_connect() override { socket_->open(udp::v4()); }
 
   void close() override { if(socket_ != nullptr) socket_->close(); }
 

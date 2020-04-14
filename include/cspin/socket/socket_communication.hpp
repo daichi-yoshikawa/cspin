@@ -70,6 +70,8 @@ public:
     throw NotImplementedError("SocketCommunication::send is called.");
   }
 
+  virtual void try_connect() {}
+
   virtual void close() = 0;
 
   void setCallback(CallbackType callback_type, const CallbackFunction& callback)

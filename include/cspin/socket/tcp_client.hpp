@@ -57,7 +57,7 @@ public:
     }
   }
 
-  bool is_connected() const override { return is_connected_; }
+  void try_connect() override { this->connect(); }
 
   void close() override { if(socket_ != nullptr) socket_->close(); }
 
