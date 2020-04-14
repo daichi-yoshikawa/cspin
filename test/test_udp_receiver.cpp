@@ -25,7 +25,7 @@ private:
   uint32_t cnt_;
 };
 
-int main(int argc, char** argv)
+int main()
 {
   Robot robot;
   CallbackFunction receive_callback = std::bind(&Robot::receive_callback, &robot, std::placeholders::_1);

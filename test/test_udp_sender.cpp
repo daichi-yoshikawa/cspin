@@ -23,7 +23,7 @@ public:
   void send()
   {
     ++cnt_;
-    std::string send_data = "test message <`1234567890-=~!@#$%^&*()_+qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM[]\{}|;':\",./<>?";
+    std::string send_data = "test message <`1234567890-=~!@#$%^&*()_+qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM[]\\{}|;':\",./<>?";
     sender_->send(send_data);
 
     if(cnt_ > 10)
@@ -54,11 +54,13 @@ private:
   uint32_t cnt_;
 };
 
-int main(int argc, char** argv)
+int main()
 {
   Robot robot;
   std::chrono::milliseconds interval(1000);
   std::function<void()> te_callback = std::bind(&Robot::send, &robot);
   cspin::TimerEventPtr te = std::make_shared<cspin::TimerEvent>(interval, te_callback, 1);
   te->start();
+
+  return 0;
 }

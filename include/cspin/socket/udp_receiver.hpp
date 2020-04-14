@@ -2,6 +2,7 @@
 #define CSPIN_INCLUDE_CSPIN_SOCKET_UDP_RECEIVER_HPP_
 
 #include <vector>
+#include <limits>
 #include <memory>
 
 #include "boost/asio.hpp"
@@ -28,8 +29,8 @@ public:
           })
       ),
       sender_point_(boost::asio::ip::address::from_string(ip_address), port),
-      buffer_size_(buffer_size),
-      buffer_(buffer_size)
+      buffer_(buffer_size),
+      buffer_size_(buffer_size)
   {
     socket_ = std::make_unique<udp::socket>(io_service_);
     socket_->open(udp::v4());
@@ -69,8 +70,22 @@ private:
       return;
     }
 
-    this->getCallback(CallbackType::RECEIVE)(std::string(buffer_.begin(), buffer_.begin()+bytes_transferred));
+    this->getCallback(CallbackType::RECEIVE)(
+        std::string(
+            buffer_.begin(),
+            buffer_.begin()+cast_size_t_to_int64_t(bytes_transferred)));
     wait_to_receive();
+  }
+
+  int64_t cast_size_t_to_int64_t(size_t size)
+  {
+    if(size > std::numeric_limits<int64_t>::max())
+    {
+      throw std::overflow_error(
+          "UDPReceiver::cast_size_t_to_int64_t failed. Given value cannot be stored in int64_t variable.");
+    }
+
+    return static_cast<int64_t>(size);
   }
 
   boost::asio::io_service io_service_;

@@ -17,27 +17,13 @@ namespace socket
 
 namespace defaults
 {
-static void empty_callback(const std::string& msg) {}
 
-static void callback(const std::string& msg)
-{
-  std::cout << msg << std::endl;
-}
+inline static void empty_callback(const std::string&) {}
+inline static void callback(const std::string& msg) { std::cout << msg << std::endl; }
+inline static void send_callback(const std::string& data) { std::cout << "Sent: " << data << std::endl; }
+inline static void receive_callback(const std::string& data) { std::cout << "Received: " << data << std::endl; }
+inline static void error_callback(const std::string& err_msg) { std::cerr << "Error: " << err_msg << std::endl; }
 
-static void send_callback(const std::string& data)
-{
-  std::cout << "Sent: " << data << std::endl;
-}
-
-static void receive_callback(const std::string& data)
-{
-  std::cout << "Received: " << data << std::endl;
-}
-
-static void error_callback(const std::string& err_msg)
-{
-  std::cerr << "Error: " << err_msg << std::endl;
-}
 } // namespace defaults
 
 enum class CallbackType

@@ -20,6 +20,6 @@ target_include_directories(cspin
 )
 # rt is needed for shared memory.
 target_link_libraries(cspin INTERFACE pthread rt)
-#target_compile_options(cspin INTERFACE -Wall -Werror -pedantic-errors -Wextra -Wconversion -Wsign-conversion)
+target_compile_options(cspin INTERFACE -Wall -Werror -pedantic-errors -Wextra -Wconversion -Wsign-conversion)
 
 add_subdirectory(test)

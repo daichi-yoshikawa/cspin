@@ -28,7 +28,8 @@ public:
               { CallbackType::RECEIVE_ERROR, defaults::error_callback }
           })
       ),
-      client_point_(boost::asio::ip::address::from_string(ip_address), port)
+      client_point_(boost::asio::ip::address::from_string(ip_address), port),
+      buffer_size_(buffer_size)
   {
     acceptor_ = std::make_unique<tcp::acceptor>(io_service_, client_point_);
     socket_ = std::make_unique<tcp::socket>(io_service_);
@@ -77,12 +78,11 @@ private:
       boost::asio::transfer_at_least(1),
       boost::bind(
           &TCPServer::receive, this,
-          boost::asio::placeholders::error,
-          boost::asio::placeholders::bytes_transferred)
+          boost::asio::placeholders::error)
     );
   }
 
-  void receive(const boost::system::error_code& error, size_t bytes_transferred)
+  void receive(const boost::system::error_code& error)
   {
     if(error)
     {
@@ -102,6 +102,7 @@ private:
   std::unique_ptr<tcp::socket> socket_;
   tcp::endpoint client_point_;
   boost::asio::streambuf buffer_;
+  size_t buffer_size_;
 };
 
 using TCPServerPtr = std::shared_ptr<TCPServer>;

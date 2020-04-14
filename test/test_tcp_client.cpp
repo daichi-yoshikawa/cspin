@@ -26,7 +26,7 @@ public:
   void func()
   {
     ++cnt_;
-    std::string data = "test message <`1234567890-=~!@#$%^&*()_+qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM[]\{}|;':\",./<>?";
+    std::string data = "test message <`1234567890-=~!@#$%^&*()_+qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM[]\\{}|;':\",./<>?";
 
     client_->send(data);
 
@@ -68,7 +68,7 @@ private:
   uint32_t cnt_;
 };
 
-int main(int argc, char** argv)
+int main()
 {
   Robot robot;
   std::chrono::milliseconds interval(1000);
