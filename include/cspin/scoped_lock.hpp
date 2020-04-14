@@ -19,6 +19,6 @@ using ScopedLockUPtr = std::unique_ptr< scoped_lock<T> >;
 template<typename T>
 using ScopedLockSPtr = std::shared_ptr< scoped_lock<T> >;
 
-}
+} // namespace cspin
 
 #endif // CSPIN_INCLUDE_CSPIN_SCOPED_LOCK_HPP_

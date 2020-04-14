@@ -10,10 +10,10 @@
 #include "cspin/scoped_lock.hpp"
 #include "cspin/named_mutex.hpp"
 
-namespace ipc = boost::interprocess;
-
 namespace cspin
 {
+
+namespace ipc = boost::interprocess;
 
 template<typename T>
 void write_with_lock(T* shm_data, const T& data, std::shared_ptr<NamedMutex>& mutex_)
@@ -143,6 +143,6 @@ using SharedMemoryUPtr = std::unique_ptr< SharedMemory<T> >;
 template<typename T>
 using SharedMemorySPtr = std::shared_ptr< SharedMemory<T> >;
 
-}
+} // namespace cspin
 
 #endif // CSPIN_INCLUDE_CSPIN_SHARED_MEMORY_HPP_

@@ -12,6 +12,6 @@ using NamedMutexPtr = std::shared_ptr<named_mutex>;
 using NamedMutexUPtr = std::unique_ptr<named_mutex>;
 using NamedMutexSPtr = std::shared_ptr<named_mutex>;
 
-}
+} // namespace cspin
 
 #endif // CSPIN_INCLUDE_CSPIN_NAMED_MUTEX_HPP_
