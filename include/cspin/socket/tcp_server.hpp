@@ -20,12 +20,12 @@ class TCPServer : public SocketCommunication
 public:
   explicit TCPServer(const std::string& ip_address, uint16_t port, std::size_t buffer_size = 4096)
     : SocketCommunication(
-        CallbackFunctionMap({
-            { CallbackType::ACCEPT, defaults::callback },
-            { CallbackType::RECEIVE, defaults::receive_callback },
-            { CallbackType::ACCEPT_ERROR, defaults::error_callback },
-            { CallbackType::RECEIVE_ERROR, defaults::error_callback }
-        })
+          CallbackFunctionMap({
+              { CallbackType::ACCEPT, defaults::callback },
+              { CallbackType::RECEIVE, defaults::receive_callback },
+              { CallbackType::ACCEPT_ERROR, defaults::error_callback },
+              { CallbackType::RECEIVE_ERROR, defaults::error_callback }
+          })
       ),
       client_point_(boost::asio::ip::address::from_string(ip_address), port)
   {
@@ -50,8 +50,8 @@ private:
   void wait_to_accept()
   {
     acceptor_->async_accept(
-      *socket_, boost::bind(
-          &TCPServer::accept, this, boost::asio::placeholders::error)
+        *socket_, boost::bind(
+            &TCPServer::accept, this, boost::asio::placeholders::error)
     );
   }
 
@@ -60,6 +60,9 @@ private:
     if(error)
     {
       this->getCallback(CallbackType::ACCEPT_ERROR)(error.message());
+      socket_->close();
+      wait_to_accept();
+      return;
     }
     this->getCallback(CallbackType::ACCEPT)("");
     wait_to_receive();
@@ -72,8 +75,9 @@ private:
       buffer_,
       boost::asio::transfer_at_least(1),
       boost::bind(
-        &TCPServer::receive, this,
-        boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred)
+          &TCPServer::receive, this,
+          boost::asio::placeholders::error,
+          boost::asio::placeholders::bytes_transferred)
     );
   }
 

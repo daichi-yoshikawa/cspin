@@ -20,10 +20,10 @@ class UDPSender : public SocketCommunication
 public:
   explicit UDPSender(const std::string& ip_address, uint16_t port)
     : SocketCommunication(
-        CallbackFunctionMap({
-            { CallbackType::SEND, defaults::empty_callback },
-            { CallbackType::SEND_ERROR, defaults::empty_callback }
-        })
+          CallbackFunctionMap({
+              { CallbackType::SEND, defaults::empty_callback },
+              { CallbackType::SEND_ERROR, defaults::empty_callback }
+          })
       ),
       receiver_point_(boost::asio::ip::address::from_string(ip_address), port)
   {

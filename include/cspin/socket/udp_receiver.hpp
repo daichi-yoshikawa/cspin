@@ -21,10 +21,10 @@ class UDPReceiver : public SocketCommunication
 public:
   explicit UDPReceiver(const std::string& ip_address, uint16_t port, std::size_t buffer_size = 4096)
     : SocketCommunication(
-        CallbackFunctionMap({
-            { CallbackType::RECEIVE, defaults::receive_callback },
-            { CallbackType::RECEIVE_ERROR, defaults::error_callback }
-        })
+          CallbackFunctionMap({
+              { CallbackType::RECEIVE, defaults::receive_callback },
+              { CallbackType::RECEIVE_ERROR, defaults::error_callback }
+          })
       ),
       sender_point_(boost::asio::ip::address::from_string(ip_address), port),
       buffer_size_(buffer_size),
@@ -59,11 +59,11 @@ private:
   void wait_to_receive()
   {
     socket_->async_receive_from(
-      boost::asio::buffer(buffer_), sender_point_,
-      boost::bind(
-        &UDPReceiver::receive, this,
-        boost::asio::placeholders::error,
-        boost::asio::placeholders::bytes_transferred)
+        boost::asio::buffer(buffer_), sender_point_,
+        boost::bind(
+            &UDPReceiver::receive, this,
+            boost::asio::placeholders::error,
+            boost::asio::placeholders::bytes_transferred)
     );
   }
 
